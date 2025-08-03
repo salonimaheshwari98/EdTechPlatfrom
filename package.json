@@ -1,22 +1,39 @@
 {
-  "name": "eduvate",
+  "name": "study",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@reduxjs/toolkit": "^2.8.2",
     "@testing-library/dom": "^10.4.0",
     "@testing-library/jest-dom": "^6.6.3",
-    "@testing-library/react": "^16.3.0",
+    "@testing-library/react": "^16.2.0",
     "@testing-library/user-event": "^13.5.0",
-    "react": "^19.1.0",
-    "react-dom": "^19.1.0",
+    "axios": "^1.11.0",
+    "concurrently": "^9.2.0",
+    "dot-env": "^0.0.1",
+    "dotenv": "^17.2.1",
+    "nodemon": "^3.1.10",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-hook-form": "^7.61.1",
+    "react-hot-toast": "^2.5.2",
+    "react-icons": "^5.5.0",
+    "react-otp-input": "^3.1.1",
+    "react-redux": "^9.2.0",
+    "react-router-dom": "^7.3.0",
     "react-scripts": "5.0.1",
+    "react-toastify": "^11.0.5",
+    "react-type-animation": "^3.2.0",
+    "redux-toolkit": "^1.1.2",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "server": "cd server && npm run dev",
+    "dev": "concurrently -n \"client,server\" -c \"bgBlue,bgYellow\" \"npm start\" \"npm run server\""
   },
   "eslintConfig": {
     "extends": [
