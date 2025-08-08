@@ -3,47 +3,45 @@ require("dotenv").config();
 const User=require("../models/User");
 
 //auth
-exports.auth=async (req,res,next)=>{
-           try{
+exports.auth = async (req, res, next) => {
+    try {
+        // Correctly extract token from cookies, body, or header
+ const token =
+  req.cookies?.token ||
+  req.body?.token ||
+  (req.header("Authorization")?.startsWith("Bearer ")
+    ? req.header("Authorization").split(" ")[1]
+    : null);
 
-            //extract token
-            const token=req.cookies.token  
-                         || req.body.token  
-                         || req.header("Authorisation").replace("Bearer ","");
+    
 
-                         //if token is missing then return response
-                         if(!token){
-                            return res.status(401).json({
-                                success:false,
-                                message:"Token is missing",
-                            });
-                         }
-                         //verify the token the token is verified on the basis of secret key
-
-                         try{
-                           const decode= jwt.verify(token,process.env.JWT_SECRET);
-                           console.log(decode);
-                           req.user=decode;//req k andar user obj mein decode daala
-
-                         }catch(error){
-                                //verfication issue
-                                return res.status(401).json({
-                                    success:false,
-                                    message:"Token is invalid",
-                                });
-                         }
-                         next();
-
-//bearer token extraction has to be followed and extracting token from body should be avoided
-           }
-           catch(error){
+        if (!token) {
             return res.status(401).json({
-                success:false,
-                message:"Something went wrong while validating the token",
+                success: false,
+                message: "Token is missing",
             });
+        }
 
-           }
-}
+        // Verify the token
+        try {
+            const decoded = jwt.verify(token, process.env.JWT_SECRET);
+            req.user = decoded; // ✅ This gives you access to decoded.id
+        } catch (error) {
+            return res.status(401).json({
+                success: false,
+                message: "Token is invalid",
+            });
+        }
+
+        next(); // Continue to next middleware or route handler
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            success: false,
+            message: "Something went wrong while validating the token",
+        });
+    }
+};
 
 //is Student
 
