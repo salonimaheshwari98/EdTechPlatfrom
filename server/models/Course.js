@@ -30,6 +30,7 @@ const courseSchema=new mongoose.Schema({
         {
             type:mongoose.Schema.Types.ObjectId,
             ref:"RatingAndReview",
+            
         }
     ],
     price:{
@@ -64,7 +65,8 @@ const courseSchema=new mongoose.Schema({
     courseContent: [{
   type: mongoose.Schema.Types.ObjectId,
   ref: "Section"
-}]
+}],
+ createdAt: { type: Date, default: Date.now },
     
 });
 module.exports=mongoose.model("Course",courseSchema);

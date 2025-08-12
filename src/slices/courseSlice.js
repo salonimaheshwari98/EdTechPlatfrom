@@ -5,6 +5,7 @@ const initialState = {
   course: null,
   editCourse: false,
   paymentLoading: false,
+   
 }
 
 const courseSlice = createSlice({

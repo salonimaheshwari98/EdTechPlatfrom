@@ -10,10 +10,10 @@ const categorySchema=new mongoose.Schema({
         type:String,
         trim:true,
     },
-    course:{
+    courses:[{
         type:mongoose.Schema.Types.ObjectId,
         // required:true,
         ref:"Course",
-    }
+    }]
 });
 module.exports=mongoose.model("Category",categorySchema);

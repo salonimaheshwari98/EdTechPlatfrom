@@ -46,8 +46,12 @@ const {
 const {
   createRating,
   getAverageRating,
-  getAllRating,
+  getAllRatingReview,
 } = require("../controllers/RatingandReview")
+const {
+  updateCourseProgress,
+  getProgressPercentage,
+} = require("../controllers/CourseProgress")
 // const {
 //   updateCourseProgress,
 //   getProgressPercentage,
@@ -84,7 +88,7 @@ router.post("/getCourseDetails", getCourseDetails)
 // Get Details for a Specific Courses
  router.post("/getFullCourseDetails", auth, getFullCourseDetails)
 // To Update Course Progress
-// router.post("/updateCourseProgress", auth, isStudent, updateCourseProgress)
+ router.post("/updateCourseProgress", auth, isStudent, updateCourseProgress)
 // To get Course Progress
 // router.post("/getProgressPercentage", auth, isStudent, getProgressPercentage)
 // Delete a Course
@@ -104,6 +108,6 @@ router.post("/getCategoryPageDetails", categoryPageDetails)
 // ********************************************************************************************************
 router.post("/createRating", auth, isStudent, createRating)
 router.get("/getAverageRating", getAverageRating)
-router.get("/getReviews", getAllRating)
+router.get("/getReviews", getAllRatingReview)
 
 module.exports = router

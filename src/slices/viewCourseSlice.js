@@ -5,6 +5,7 @@ const initialState = {
   courseEntireData: [],
   completedLectures: [],
   totalNoOfLectures: 0,
+  
 }
 
 const viewCourseSlice = createSlice({
