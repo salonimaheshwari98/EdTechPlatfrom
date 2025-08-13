@@ -10,47 +10,67 @@ const mongoose = require("mongoose")
 const { convertSecondsToDuration } = require("../utils/secToDuration")
 
 
-exports.updateProfile=async (req,res)=>{
-    try{
-      //get the required data
-      const{gender,dateofBirth="",about="",contactNumber=""}= req.body;
+exports.updateProfile = async (req, res) => {
+  try {
+    // Get the required data
+    const { gender, dateofBirth = "", about = "", contactNumber = "" } = req.body;
 
-      //fetch the user data
-      const id=req.user.id;//auth middleware me decode karte waqt humne payloade ko user mein bheja hain so hum id leliye waha seh
-      //validate the data
-      if(!contactNumber||!gender||!id){
-        return res.status(400).json({
-            success:false,
-            message:`All fields are required`,
-        })
-      }
-      //find the profile and 
-      const userDetails=await User.findById(id);
-      const profileId= userDetails.additionalDetails;
-      const profileDetails=await Profile.findById(profileId);
+    // Fetch the user ID from auth middleware
+    const id = req.user.id;
 
-      //update it
-      profileDetails.dateOfBirth=dateofBirth;
-      profileDetails.about=about;
-      profileDetails.gender=gender;
-      profileDetails.contactNumber=contactNumber;//obj bna pda h so abh sidhe save func use hoga
-      await profileDetails.save();
-
-      //return response
-      return res.status(200).json({
-        success:true,
-        message:`Profile updated successfully`,
-        profileDetails,
+    // Validate input
+    if (!contactNumber || !gender || !id) {
+      return res.status(400).json({
+        success: false,
+        message: `All fields are required`,
       });
+    }
 
+    // Find the user
+    const userDetails = await User.findById(id);
+    if (!userDetails) {
+      return res.status(404).json({
+        success: false,
+        message: `User not found`,
+      });
     }
-    catch(error){
-     return res.status(500).json({
-        success:false,
-        error:error.message,
-     })
+
+    // Find the profile
+    const profileId = userDetails.additionalDetails;
+    const profileDetails = await Profile.findById(profileId);
+    if (!profileDetails) {
+      return res.status(404).json({
+        success: false,
+        message: `Profile not found`,
+      });
     }
-}
+
+    // Update profile fields
+    profileDetails.dateOfBirth = dateofBirth;
+    profileDetails.about = about;
+    profileDetails.gender = gender;
+    profileDetails.contactNumber = contactNumber;
+    await profileDetails.save();
+
+    // Fetch updated user with populated profile
+    const updatedUserDetails = await User.findById(id)
+      .populate("additionalDetails")
+      .exec();
+
+    // Return combined data
+    return res.status(200).json({
+      success: true,
+      message: `Profile updated successfully`,
+      profileDetails: updatedUserDetails, // contains firstName, lastName, image, and additionalDetails
+    });
+
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      error: error.message,
+    });
+  }
+};
 
 //delete account
 
@@ -209,5 +229,35 @@ exports.getEnrolledCourses = async (req, res) => {
       success: false,
       message: error.message,
     })
+  }
+}
+
+
+
+exports.instructorDashboard = async (req, res) => {
+  try {
+    const courseDetails = await Course.find({ instructor: req.user.id })
+
+    const courseData = courseDetails.map((course) => {
+      const totalStudentsEnrolled = course?.studentsEnrolled?.length
+      const totalAmountGenerated = totalStudentsEnrolled * course.price
+
+      // Create a new object with the additional fields
+      const courseDataWithStats = {
+        _id: course._id,
+        courseName: course.courseName,
+        courseDescription: course.courseDescription,
+        // Include other course properties as needed
+        totalStudentsEnrolled,
+        totalAmountGenerated,
+      }
+
+      return courseDataWithStats
+    })
+
+    res.status(200).json({ courses: courseData })
+  } catch (error) {
+    console.error(error)
+    res.status(500).json({ message: "Server Error" })
   }
 }

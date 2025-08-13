@@ -10,11 +10,14 @@ import { markLectureAsComplete } from "../../../services/operations/courseDetail
 import { updateCompletedLectures } from "../../../slices/viewCourseSlice"
 import IconBtn from "../../common/IconBtn"
 
+//dom k andar kisi component ko manipulate karna hua toh hum useRef ka istemaal karte h
+//that is we can achieve re watch one functionality
+
 const VideoDetails = () => {
   const { courseId, sectionId, subSectionId } = useParams()
   const navigate = useNavigate()
   const location = useLocation()
-  const playerRef = useRef(null)
+  const playerRef = useRef(null)//player ka ref use ref seh lerahe
   const dispatch = useDispatch()
   const { token } = useSelector((state) => state.auth)
   const { courseSectionData, courseEntireData, completedLectures } =
@@ -32,9 +35,11 @@ const VideoDetails = () => {
         navigate(`/dashboard/enrolled-courses`)
       } else {
         // console.log("courseSectionData", courseSectionData)
+        //fetching section
         const filteredData = courseSectionData.filter(
           (course) => course._id === sectionId
         )
+
         // console.log("filteredData", filteredData)
         const filteredVideoData = filteredData?.[0]?.subSection.filter(
           (data) => data._id === subSectionId
@@ -47,7 +52,7 @@ const VideoDetails = () => {
     })()
   }, [courseSectionData, courseEntireData, location.pathname])
 
-  // check if the lecture is the first video of the course
+  // check if the lecture is the first video of the course to show prev video
   const isFirstVideo = () => {
     const currentSectionIndx = courseSectionData.findIndex(
       (data) => data._id === sectionId
@@ -65,7 +70,7 @@ const VideoDetails = () => {
   }
 
   // go to the next video
-  const goToNextVideo = () => {
+  const goToNextVideo = () => { 
     // console.log(courseSectionData)
 
     const currentSectionIndx = courseSectionData.findIndex(
@@ -80,7 +85,7 @@ const VideoDetails = () => {
     ].subSection.findIndex((data) => data._id === subSectionId)
 
     // console.log("no of subsections", noOfSubsections)
-
+   //sakme sec ki first video
     if (currentSubSectionIndx !== noOfSubsections - 1) {
       const nextSubSectionId =
         courseSectionData[currentSectionIndx].subSection[
@@ -90,6 +95,7 @@ const VideoDetails = () => {
         `/view-course/${courseId}/section/${sectionId}/sub-section/${nextSubSectionId}`
       )
     } else {
+      //diff sec ki first video
       const nextSectionId = courseSectionData[currentSectionIndx + 1]._id
       const nextSubSectionId =
         courseSectionData[currentSectionIndx + 1].subSection[0]._id
@@ -99,7 +105,7 @@ const VideoDetails = () => {
     }
   }
 
-  // check if the lecture is the last video of the course
+  // check if the lecture is the last video of the course not last video
   const isLastVideo = () => {
     const currentSectionIndx = courseSectionData.findIndex(
       (data) => data._id === sectionId
@@ -162,6 +168,7 @@ const VideoDetails = () => {
       { courseId: courseId, subsectionId: subSectionId },
       token
     )
+    //state update kardiya
     if (res) {
       dispatch(updateCompletedLectures(subSectionId))
     }
@@ -194,7 +201,8 @@ const VideoDetails = () => {
               }}
               className="full absolute inset-0 z-[100] grid h-full place-content-center font-inter"
             >
-              {!completedLectures.includes(subSectionId) && (
+            
+              {!completedLectures.includes(subSectionId) && (//wahi peh dikhayenge jaha video lect complete nhi h
                 <IconBtn
                   disabled={loading}
                   onclick={() => handleLectureCompletion()}
