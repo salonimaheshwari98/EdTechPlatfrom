@@ -1,11 +1,12 @@
 import axios from "axios"
 
 export const axiosInstance=axios.create({});
+const BACK_URL = process.env.REACT_APP_BACK_URL;
 
 export const apiConnector=(method,url,bodyData,headers,params)=>{
     return axiosInstance({
         method:`${method}`,
-        url:`${url}`,
+        url:`${BACK_URL}${url}`,
         data:bodyData?bodyData:null,
         headers:headers?headers:null,
         params:params?params:null,
