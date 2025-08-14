@@ -26,7 +26,7 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(
     cors({
-        origin:"http://localhost:3001",
+        origin:"https://vercelfrontend-256v.vercel.app/",
         credentials:true,
     })
 )//we want that the req coming from frontend hoisted at 3000 to be entertained by backend
